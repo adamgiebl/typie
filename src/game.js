@@ -1,10 +1,13 @@
 import React, { Component } from "react";
-import styled from "styled-components";
+import kanye from "./giphy.gif"
+import styled, { keyframes } from "styled-components";
 
 class Game extends Component {
   state = {
     text: [],
     wpm: 0,
+    showKanye: false,
+    started: false
   };
 
   body = document.getElementsByTagName('body')[0];
@@ -59,6 +62,7 @@ class Game extends Component {
     this.timer = true; 
     this.start = performance.now();
     setInterval(() => this.float(), 10);
+    this.setState({ started: true })
   }
 
   endTimer() {
@@ -66,7 +70,7 @@ class Game extends Component {
     const time = (end - this.start) / 1000 / 60;
     const wordCount = this.charCount / 5;
     const wpm = wordCount / time;
-    this.setState({ wpm: Math.floor(wpm) });
+    this.setState({ wpm: Math.floor(wpm), showKanye: true });
     this.end = true;
   }
 
@@ -77,8 +81,6 @@ class Game extends Component {
     this.canvas.width = this.canvasW;
     this.canvas.height = this.canvasH;
     this.ctx = this.canvas.getContext("2d");
-    this.ctx.fillStyle = "cornflowerblue";
-    this.ctx.fillRect(0, 0, this.canvasW, this.canvasH);
     this.ctx.font = "bold 80px Baloo Bhai";
     this.ctx.fillStyle = "#91b7f7";
     document.addEventListener("keydown", e => this.charTyped(e));
@@ -101,45 +103,118 @@ class Game extends Component {
       <>
         <canvas id="canvas"></canvas>
         <GameContainer>
-          <h2>Type this Kanye West quote:</h2>
-          <Text>{this.state.text}</Text>
-          <Wpm>
-            {this.state.wpm !== 0 && (
-              <>
-                Your wpm is:{' '}
-                <Large>{this.state.wpm}</Large>
-              </>
-            )}
-          </Wpm>
+          <Heading>Type this Kanye West quote:</Heading>
+          <Text started={this.state.started}>{this.state.text}</Text>
+          <Flex>
+            <Wpm>
+              {this.state.wpm !== 0 && (
+                <>
+                  Your wpm is:{' '}
+                  <Large>{this.state.wpm}</Large>
+                </>
+              )}
+            </Wpm>
+            <ReloadButton onClick={()=> window.location.reload()}>New quote</ReloadButton>
+          </Flex>
         </GameContainer>
+        {this.state.showKanye && 
+          <KanyeImg src={kanye} />
+        }
       </>
     );
   }
 }
 
+const blink = keyframes`
+  from, to {
+    color: transparent;
+  }
+  50% {
+    color: black;
+  }
+`
+
 const Text = styled.div`
-  color: #01172f;
-  background: lavender;
-  padding: 15px;
+  color: #2B2D42;
+  background: #EDF2F4;
+  padding: 20px;
   letter-spacing: 1px;
+  font-size: 18px;
   font-weight: bold;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 0 0 15px #EDF2F4;
+  span { position: relative; }
+  span:first-child:before {
+    content: ${(props) => props.started ? "''" : "'|'"};
+    position: absolute;
+    left: -6px;
+    font-size: 20px;
+    top: -2px;
+    animation: 1s ${blink} step-end infinite;
+  }
 `;
 
 const Wpm = styled.div`
-  margin-top: 20px;
+  margin-top: 0px;
+  font-weight: bold;
+  user-select: none;
 `;
+
+const Heading = styled.h1`
+  margin-bottom: 40px;
+`
 
 const Large = styled.span`
     font-size: 30px;
     font-weight: bold;
     padding: 0 5px;
-    background: midnightblue;
+    background: #2B2D42;
+`
+
+const comeUp = keyframes`
+  from {
+    opacity: 0
+  }
+  to {
+    opacity: 1;
+  }
+`;
+
+const KanyeImg = styled.img`
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  animation: ${comeUp} .2s linear;
 `
 
 const GameContainer = styled.div`
   width: 600px;
   height: 500px;
 `;
+
+const ReloadButton = styled.button`
+  cursor: pointer;
+  padding: 12px 17px;
+  background: #D80032;
+  outline: 0;
+  border: none;
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+  float: right;
+  transition: all .3s;
+  box-shadow: 5px 5px 0px -1px #EDF2F4;
+  user-select: none;
+  &:focus, &:hover {
+    box-shadow: 3px 3px 0px -1px #EDF2F4;
+    background: #B7002A;
+  }
+`
+
+const Flex = styled.div`
+  margin-top: 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`
 
 export default Game;
