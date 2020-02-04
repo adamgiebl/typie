@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import kanye from "./giphy.gif"
+import quotes from './quotes.json'
 import styled, { keyframes } from "styled-components";
 
 class Game extends Component {
@@ -21,7 +22,7 @@ class Game extends Component {
   start = 0;
   wordCount = 0;
   end = false;
-  color = "#ffffff"
+  color = "#81C8FF"
 
   charTyped(e) {
     const state = this.state;
@@ -84,18 +85,16 @@ class Game extends Component {
     this.ctx.font = "bold 80px Baloo Bhai";
     this.ctx.fillStyle = this.color;
     document.addEventListener("keydown", e => this.charTyped(e));
-    fetch("https://api.kanye.rest")
-      .then(res => res.json())
-      .then(({ quote }) => {
-        this.setState({
-          text: quote.split("").map((letter, index) => (
-            <span id={index} key={index}>{`${letter}`}</span>
-          ))
-        });
-        this.charCount = quote.split("").length;
-      });
-    
-    
+
+    //get random quote
+    const quote = quotes[Math.floor(Math.random() * (quotes.length - 0 + 1)) + 0];
+
+    this.setState({
+      text: quote.split("").map((letter, index) => (
+        <span id={index} key={index}>{`${letter}`}</span>
+      ))
+    });
+    this.charCount = quote.split("").length;
   }
   render() {
     return (
