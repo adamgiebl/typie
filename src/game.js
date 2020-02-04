@@ -21,6 +21,7 @@ class Game extends Component {
   start = 0;
   wordCount = 0;
   end = false;
+  color = "#ffffff"
 
   charTyped(e) {
     const state = this.state;
@@ -32,7 +33,6 @@ class Game extends Component {
         document.getElementById(this.index).classList.add('g');
         this.floatLetter(state.text[this.index].props.children);
         this.index = ++this.index;
-        console.log(this.state.text);
       }
       if (this.index === state.text.length) {
         this.endTimer();
@@ -82,7 +82,7 @@ class Game extends Component {
     this.canvas.height = this.canvasH;
     this.ctx = this.canvas.getContext("2d");
     this.ctx.font = "bold 80px Baloo Bhai";
-    this.ctx.fillStyle = "#91b7f7";
+    this.ctx.fillStyle = this.color;
     document.addEventListener("keydown", e => this.charTyped(e));
     fetch("https://api.kanye.rest")
       .then(res => res.json())
@@ -93,7 +93,6 @@ class Game extends Component {
           ))
         });
         this.charCount = quote.split("").length;
-        console.log(this.state.text)
       });
     
     
@@ -184,6 +183,7 @@ const KanyeImg = styled.img`
   bottom: 0;
   right: 0;
   animation: ${comeUp} .2s linear;
+  z-index: -1;
 `
 
 const GameContainer = styled.div`
